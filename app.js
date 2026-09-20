@@ -482,6 +482,13 @@
 You are an expert commercial advertising director and DALL-E / ChatGPT image prompt engineer.
 Analyze the uploaded image representing ${brandName}. The style/mood requested is: "${vibe}".
 
+CLIENT MANDATE — GUARANTEED PRODUCT IDENTITY LOCK (CRITICAL):
+The client explicitly requires that the product MUST NOT CHANGE across any frames. It must be 100% "SAME TO SAME":
+1. EXACT PACKAGING: The exact packaging shape, bottle/box geometry, cap style, dispenser, and materials (glass, matte, gloss, metallic) from the uploaded image must be preserved identically.
+2. EXACT SIZE & PROPORTIONS: The physical dimensions, volume, and aspect ratio of the product must remain strictly consistent across all 4 frames.
+3. EXACT BRANDING & LABELS: The exact brand logo, font typography, label text placement, and color hex palette must NOT be redesigned, morphed, or altered.
+4. ZERO HALLUCINATIONS: Do NOT invent new packaging shapes, do not swap lids, do not change label placement.
+
 Your task:
 Craft an ultra-detailed, cinematic prompt intended for ChatGPT / DALL-E 3 to generate a 4-panel storyboard image (2x2 grid format) for a 10-SECOND COMMERCIAL ADVERTISEMENT.
 
@@ -493,7 +500,7 @@ STRICT CONSTRAINTS FOR THE 10-SECOND COMMERCIAL:
 - Frame 4 [00:08 - 00:10]: Brand Outro & Logo Reveal (Polished, minimalist final frame with the brand logo/product centered cleanly on a premium background).
 
 FORMAT INSTRUCTIONS:
-Return ONLY the ready-to-copy prompt for ChatGPT inside a clean block, structured clearly so ChatGPT generates a single consolidated 4-panel storyboard image with photorealistic quality, 8k commercial cinematography, and consistent styling across all 4 frames.
+Return ONLY the ready-to-copy prompt for ChatGPT inside a clean block, structured clearly so ChatGPT generates a single consolidated 4-panel storyboard image with photorealistic quality, 8k commercial cinematography, and consistent styling across all 4 frames. Inside the prompt, include an explicit "PRODUCT IDENTITY LOCK & ZERO-VARIATION DIRECTIVE" instructing DALL-E/ChatGPT to keep the product 100% identical in packaging, size, label, and colors across all 4 panels without alteration.
 `;
 
     try {
@@ -538,16 +545,21 @@ You are a senior AI video prompt engineer specializing in Google Flow (Veo / Vid
 Analyze this uploaded multi-frame storyboard image representing a 10-second commercial for ${brandName} in "${vibe}" style.
 
 STRICT COMMERCIAL CONSTRAINTS MANDATED BY CLIENT:
-1. DURATION: Exactly 10 seconds total runtime.
-2. NO VOICEOVER: Absolutely NO voiceover, spoken words, or narration.
-3. SOUND/AUDIO: Pure sound design only! Specify rich atmospheric background music, tempo transitions, and crisp tactile foley sound effects (e.g. whoosh, clicks, deep bass drop, ambient synth pad).
-4. NO ON-SCREEN TEXT during the narrative scenes (No floating subtitles or bullet points).
-5. OUTRO: The final 1 to 2 seconds (08.0s to 10.0s) MUST be a dedicated, elegant brand outro reveal featuring the brand logo/product silhouette cleanly resolving with a subtle shimmer.
+1. GUARANTEED PRODUCT IDENTITY LOCK & ZERO-MORPHING (CRITICAL):
+   - The product must remain 100% "SAME TO SAME" across the entire 10 seconds.
+   - Exact size, packaging silhouette, bottle/box geometry, cap finish, label typography, and brand colors must be locked without ANY alteration.
+   - ZERO MORPHING: The product container and branding must NEVER distort, morph, hallucinate alternative shapes, or stretch.
+   - Camera motion and environmental physics (splashes, lighting flares, reflections) move dynamically around the product, but the product itself is an immutable physical hero object.
+2. DURATION: Exactly 10 seconds total runtime.
+3. NO VOICEOVER: Absolutely NO voiceover, spoken words, or narration.
+4. SOUND/AUDIO: Pure sound design only! Specify rich atmospheric background music, tempo transitions, and crisp tactile foley sound effects (e.g. whoosh, clicks, deep bass drop, ambient synth pad).
+5. NO ON-SCREEN TEXT during the narrative scenes (No floating subtitles or bullet points).
+6. OUTRO: The final 1 to 2 seconds (08.0s to 10.0s) MUST be a dedicated, elegant brand outro reveal featuring the brand logo/product silhouette cleanly resolving with a subtle shimmer.
 
 OUTPUT FORMAT:
 Generate two distinct sections:
 [GOOGLE_FLOW_PROMPT]
-(The comprehensive, camera-directed prompt optimized for Google Flow text-to-video / image-to-video generator. Include exact camera motion: focal length, dolly speeds, frame rates, lighting transitions from scene 1 through scene 4, and the final 1-2s brand outro transition.)
+(The comprehensive, camera-directed prompt optimized for Google Flow text-to-video / image-to-video generator. Include exact camera motion: focal length, dolly speeds, frame rates, lighting transitions from scene 1 through scene 4, the final 1-2s brand outro transition, and an explicit "PRODUCT INTEGRITY & ZERO-MORPHING DIRECTIVE" guaranteeing the product retains 100% same packaging, proportions, and branding throughout.)
 
 [AUDIO_DESIGN_SPEC]
 (Detailed sound effects, foley cues, and music rhythm breakdown with NO VOICEOVER.)
@@ -648,6 +660,7 @@ Generate two distinct sections:
 - **Voiceover**: NONE (Pure sound design and ambient score)
 - **On-Screen Text**: None in narrative scenes
 - **Outro**: 1 to 2 Second Brand Reveal (08.0s - 10.0s)
+- **Product Identity Guarantee**: 100% LOCKED (Exact same-to-same packaging, size, proportions, and branding across all frames)
 
 ---
 
@@ -762,13 +775,18 @@ ${el.soundDesignContent.textContent || 'Atmospheric cinematic soundscape with dy
     el.brandNameInput.value = 'Lumina Auric Essence';
     el.adVibeSelect.value = 'cinematic-luxury';
 
-    // 2. Load pre-crafted realistic ChatGPT Storyboard Prompt
+    // 2. Load pre-crafted realistic ChatGPT Storyboard Prompt with Product Identity Lock
     state.storyboardPrompt = `A 4-panel commercial storyboard (2x2 grid) for a 10-second high-end luxury advertisement of "Lumina Auric Essence". 8k commercial cinematography, photorealistic, Hasselblad medium format camera, volumetric studio backlighting:
 
-Panel 1 [00:00 - 00:02: Visual Hook]: Extreme macro close-up of a single golden droplet suspended above a glowing obsidian glass surface. The droplet refracts iridescent violet and cyan light rays, radiating elegance.
-Panel 2 [00:02 - 00:05: Feature in Action]: The sleek glass bottle of Lumina Auric Essence bursts upward through a fluid crystalline splash of pure luminous water, frozen in high-speed f/1.4 slow-motion.
-Panel 3 [00:05 - 00:08: Sensory Payoff]: A radiant supermodel's cheekbone bathed in golden hour studio illumination, glowing skin texture, cinematic lens flare, product softly resting in the bokeh foreground.
-Panel 4 [00:08 - 00:10: Brand Outro]: Minimalist, pure dark silk pedestal with the Lumina bottle centered in soft spotlight. The refined typography "LUMINA" shines in rose-gold foil with an ethereal lens glint.
+GUARANTEED PRODUCT IDENTITY LOCK (SAME-TO-SAME PACKAGING & SIZE):
+- The product featured in all 4 frames MUST be 100% IDENTICAL to the reference packaging: a sleek curved glass bottle with rounded corners, frosted glass texture, brushed silver rectangular cap, and clean centered rose-gold typography "LUMINA AURIC ESSENCE".
+- Product dimensions, volume, packaging silhouette, and label placement must remain perfectly consistent across every frame without redesign or variation.
+- Negative constraints: do not redesign bottle, no alternate caps, no distorted shapes, no missing labels.
+
+Panel 1 [00:00 - 00:02: Visual Hook]: Extreme macro close-up of a single golden droplet suspended above a glowing obsidian glass surface. The droplet refracts iridescent violet and cyan light rays, introducing the color world of Lumina.
+Panel 2 [00:02 - 00:05: Feature in Action]: The exact sleek glass bottle of Lumina Auric Essence bursts upward through a fluid crystalline splash of pure luminous water, frozen in high-speed f/1.4 slow-motion, packaging fully intact.
+Panel 3 [00:05 - 00:08: Sensory Payoff]: A radiant supermodel's cheekbone bathed in golden hour studio illumination, glowing skin texture, cinematic lens flare, the exact Lumina bottle softly resting in the bokeh foreground.
+Panel 4 [00:08 - 00:10: Brand Outro]: Minimalist, pure dark silk pedestal with the identical Lumina bottle centered in soft spotlight. The refined typography "LUMINA" shines in rose-gold foil with an ethereal lens glint.
 
 Grid composition, unified color grading in deep violet, champagne gold, and obsidian.`;
 
@@ -825,14 +843,19 @@ Grid composition, unified color grading in deep violet, champagne gold, and obsi
     el.storyboardDropContent.classList.add('hidden');
     el.storyboardPreviewBox.classList.remove('hidden');
 
-    // 4. Load pre-crafted realistic Google Flow Prompt with all client constraints
+    // 4. Load pre-crafted realistic Google Flow Prompt with all client constraints & Product Identity Lock
     state.flowPrompt = `[Commercial Prompt for Google Flow]
 Length: Exactly 10.0 seconds | Aspect Ratio: 16:9 4K | Style: Cinematic High-End Commercial | Dialogue/Voiceover: NONE | On-Screen Text: NONE until final 2 seconds.
 
+GUARANTEED PRODUCT INTEGRITY & ZERO-MORPHING DIRECTIVE:
+- The Lumina Auric Essence bottle must remain 100% physically identical to the reference storyboard throughout all 10 seconds.
+- Zero morphing of glass geometry, cap dimensions, or label typography. The physical bottle is an immutable 3D hero object.
+- Camera and lighting move dynamically around the static/floating bottle without warping its packaging structure.
+
 Camera & Scene Motion Choreography:
 - [00:00 - 02.0s]: Slow camera dolly-in with extreme macro 90mm probe lens onto an amber-violet liquid droplet hovering above polished obsidian. Atmospheric shallow depth of field. Soft amber rim lighting illuminates micro-ripples.
-- [02.0s - 05.0s]: Dynamic seamless speed ramp into a 60fps slow-motion upward fluid burst. The glass bottle of Lumina rises majestically as crystalline water droplets scatter symmetrically around the curved silhouette. Volumetric lighting streaks pass through the glass bottle.
-- [05.0s - 08.0s]: Smooth orbiting camera glide at 45-degree angle. Warm, radiant golden-hour light sweeps across the product surface with optical anamorphic flares, capturing the sparkling clarity of the formula.
+- [02.0s - 05.0s]: Dynamic seamless speed ramp into a 60fps slow-motion upward fluid burst. The identical glass bottle of Lumina rises majestically as crystalline water droplets scatter symmetrically around the curved silhouette. Volumetric lighting streaks pass through the glass bottle without altering its form.
+- [05.0s - 08.0s]: Smooth orbiting camera glide at 45-degree angle. Warm, radiant golden-hour light sweeps across the product surface with optical anamorphic flares, capturing the sparkling clarity of the formula while preserving exact bottle packaging.
 - [08.0s - 10.0s (MANDATORY BRAND OUTRO)]: Camera gently settles into a locked-off hero center shot. Background dims to a soft velvety dark vignette. In the final 1.5 seconds, the clean embossed rose-gold "LUMINA" brand logo illuminates with a delicate shimmer glint across the letters, holding still until the fade to black.`;
 
     state.soundDesign = `Audio Design Breakdown (NO VOICEOVER):

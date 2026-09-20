@@ -16,6 +16,7 @@ This app directly implements the exact 2-stage commercial advertising workflow:
 
 2. **ChatGPT Storyboard Generation (Stage 02)**
    - Copy the generated 10-second multi-frame prompt.
+   - **Guaranteed Product Identity Lock**: The prompt strictly instructs ChatGPT/DALL-E to keep the product packaging, dimensions, bottle/box geometry, cap style, labels, and colors **100% "same-to-same"** without redesign or alteration across all 4 frames.
    - Open [ChatGPT](https://chatgpt.com) (with DALL-E 3) or Midjourney and paste the prompt.
    - ChatGPT generates a 4-panel sequential storyboard image (0-2s Hook, 2-5s Dynamic Use, 5-8s Peak Benefit, 8-10s Brand Outro).
    - Download the generated image.
@@ -23,13 +24,15 @@ This app directly implements the exact 2-stage commercial advertising workflow:
 3. **Storyboard Upload (Stage 03)**
    - Upload the ChatGPT storyboard image into Stage 03.
    - AdFlow applies your strict video production requirements:
-     - **Exact Duration**: 10 seconds.
-     - **No Voiceover**: Pure sound design and atmospheric audio only.
-     - **No On-Screen Text**: Clean cinematic visuals throughout the scenes.
-     - **Brand Outro**: Dedicated 1 to 2-second logo/product reveal at the end (08.0s - 10.0s).
+     - ⏱️ **Exact Duration**: 10 seconds.
+     - 🛡️ **Product Identity Guarantee**: 100% locked geometry (Zero morphing or packaging distortion).
+     - 🔇 **No Voiceover**: Pure sound design and atmospheric audio only.
+     - 🚫 **No On-Screen Text**: Clean cinematic visuals throughout the scenes.
+     - 🏷️ **Brand Outro**: Dedicated 1 to 2-second logo/product reveal at the end (08.0s - 10.0s).
 
 4. **Google Flow Video Generation (Stage 04)**
    - Gemini AI generates the master prompt for [Google Flow](https://labs.google/flow) (Veo / Video FX).
+   - Incorporates strict **Zero-Morphing directives**: the camera and lighting move dynamically around the product while the product remains an immutable 3D hero object.
    - Includes detailed camera trajectory (dolly push, orbiting, speed ramps), lighting physics, audio sound effects cues, and outro specifications.
    - Click **"Copy Flow Prompt"** and open Google Flow with your storyboard image to generate your final 10-second commercial video!
    - You can also click **"Download Full Ad Brief (.md)"** to save the complete production sheet.
@@ -40,7 +43,7 @@ This app directly implements the exact 2-stage commercial advertising workflow:
 
 1. Click the **"Gemini API Key"** button in the top right header.
 2. Enter your Google Gemini API Key. (Get a free key from [Google AI Studio](https://aistudio.google.com/app/apikey)).
-3. Select your preferred model (`gemini-2.5-flash` recommended).
+3. Select your preferred model (`gemini-3.6-flash` recommended).
 4. Click **"Save Key"**. The key is stored locally and securely in your browser's `localStorage`.
 
 > **💡 Quick Testing**: You can also click **"Load Demo Preset"** in the top bar to test the entire end-to-end interface immediately with high-fidelity sample brand assets and storyboard images without entering an API key.
