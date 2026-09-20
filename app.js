@@ -6,10 +6,17 @@
 (function () {
   'use strict';
 
+  // Auto-migrate legacy/deprecated models from local storage
+  let savedModel = localStorage.getItem('adflow_gemini_model');
+  if (!savedModel || savedModel === 'gemini-2.5-flash') {
+    savedModel = 'gemini-3.6-flash';
+    localStorage.setItem('adflow_gemini_model', 'gemini-3.6-flash');
+  }
+
   // --- State ---
   const state = {
     apiKey: localStorage.getItem('adflow_gemini_api_key') || '',
-    model: localStorage.getItem('adflow_gemini_model') || 'gemini-2.5-flash',
+    model: savedModel,
     brandFile: null,
     brandImageBase64: null,
     brandImageMime: null,
@@ -32,6 +39,8 @@
     toggleApiKeyVisibilityBtn: document.getElementById('toggleApiKeyVisibilityBtn'),
     eyeIcon: document.getElementById('eyeIcon'),
     geminiModelSelect: document.getElementById('geminiModelSelect'),
+    customModelGroup: document.getElementById('customModelGroup'),
+    customModelInput: document.getElementById('customModelInput'),
     testApiKeyBtn: document.getElementById('testApiKeyBtn'),
     saveApiKeyBtn: document.getElementById('saveApiKeyBtn'),
     apiTestFeedback: document.getElementById('apiTestFeedback'),
@@ -89,11 +98,11 @@
   // --- Initialization ---
   function init() {
     setupEventListeners();
+    setModelSelection(state.model);
     updateApiKeyStatusUI();
     if (state.apiKey) {
       el.apiKeyInput.value = state.apiKey;
     }
-    el.geminiModelSelect.value = state.model;
   }
 
   // --- Event Listeners ---
@@ -107,6 +116,16 @@
     el.toggleApiKeyVisibilityBtn.addEventListener('click', toggleApiKeyVisibility);
     el.testApiKeyBtn.addEventListener('click', testApiKeyConnection);
     el.saveApiKeyBtn.addEventListener('click', saveApiKeySettings);
+
+    // Model select change listener
+    el.geminiModelSelect.addEventListener('change', () => {
+      if (el.geminiModelSelect.value === 'custom') {
+        el.customModelGroup.classList.remove('hidden');
+        el.customModelInput.focus();
+      } else {
+        el.customModelGroup.classList.add('hidden');
+      }
+    });
 
     // Dropzone 1: Brand Asset
     setupDropZone(
@@ -253,22 +272,51 @@
       : `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`;
   }
 
+  function getSelectedModel() {
+    const sel = el.geminiModelSelect.value;
+    if (sel === 'custom') {
+      return el.customModelInput.value.trim() || 'gemini-3.6-flash';
+    }
+    return sel;
+  }
+
+  function setModelSelection(modelName) {
+    state.model = modelName;
+    localStorage.setItem('adflow_gemini_model', modelName);
+
+    const foundOption = Array.from(el.geminiModelSelect.options).find(o => o.value === modelName);
+    if (foundOption) {
+      el.geminiModelSelect.value = modelName;
+      el.customModelGroup.classList.add('hidden');
+    } else {
+      el.geminiModelSelect.value = 'custom';
+      el.customModelInput.value = modelName;
+      el.customModelGroup.classList.remove('hidden');
+    }
+    updateApiKeyStatusUI();
+  }
+
   async function testApiKeyConnection() {
     const key = el.apiKeyInput.value.trim();
-    const model = el.geminiModelSelect.value;
+    let model = getSelectedModel();
 
     if (!key) {
       showModalFeedback('Please enter a Gemini API Key to test.', 'error');
       return;
     }
 
+    if (model === 'gemini-2.5-flash') {
+      model = 'gemini-3.6-flash';
+      setModelSelection('gemini-3.6-flash');
+    }
+
     el.testApiKeyBtn.disabled = true;
     el.testApiKeyBtn.querySelector('.btn-text').textContent = 'Connecting...';
     showModalFeedback('Testing connection to Google Gemini API...', '');
 
-    try {
+    async function tryTest(testModel) {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${testModel}:generateContent?key=${key}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -280,10 +328,30 @@
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error?.message || 'API request failed');
+        const errMsg = data.error?.message || 'API request failed';
+        // Check if model is deprecated and Google suggested a new one
+        if (errMsg.includes('no longer available') || errMsg.includes('models/')) {
+          const match = errMsg.match(/models\/(gemini-[\w\.-]+)/g);
+          let recModel = 'gemini-3.6-flash';
+          if (match && match.length > 1) {
+            recModel = match[1].replace('models/', '');
+          } else if (match && match.length === 1 && !match[0].includes(testModel)) {
+            recModel = match[0].replace('models/', '');
+          }
+          if (recModel && recModel !== testModel) {
+            setModelSelection(recModel);
+            showModalFeedback(`Notice: ${testModel} is deprecated. Upgraded to ${recModel}. Retrying...`, '');
+            return await tryTest(recModel);
+          }
+        }
+        throw new Error(errMsg);
       }
+      return data;
+    }
 
-      showModalFeedback('Connection Verified! Your Gemini API key is valid and ready.', 'success');
+    try {
+      await tryTest(model);
+      showModalFeedback(`Connection Verified! Your Gemini API key is valid and connected to ${state.model}.`, 'success');
     } catch (err) {
       showModalFeedback(`Connection failed: ${err.message}`, 'error');
     } finally {
@@ -294,16 +362,15 @@
 
   function saveApiKeySettings() {
     const key = el.apiKeyInput.value.trim();
-    const model = el.geminiModelSelect.value;
+    const model = getSelectedModel();
 
     state.apiKey = key;
-    state.model = model;
+    setModelSelection(model);
     localStorage.setItem('adflow_gemini_api_key', key);
-    localStorage.setItem('adflow_gemini_model', model);
 
     updateApiKeyStatusUI();
     closeApiKeyModal();
-    showToast(key ? 'Gemini API key saved!' : 'Gemini API key cleared (Demo mode available)', 'success');
+    showToast(key ? `Gemini API key saved (${state.model})` : 'Gemini API key cleared (Demo mode available)', 'success');
   }
 
   function updateApiKeyStatusUI() {
@@ -329,6 +396,12 @@
       throw new Error('Please enter your Gemini API Key in the settings first, or click "Load Demo Preset" in the top bar.');
     }
 
+    let modelToUse = state.model || 'gemini-3.6-flash';
+    if (modelToUse === 'gemini-2.5-flash') {
+      modelToUse = 'gemini-3.6-flash';
+      setModelSelection('gemini-3.6-flash');
+    }
+
     const parts = [];
     if (imageBase64) {
       parts.push({
@@ -340,32 +413,53 @@
     }
     parts.push({ text: prompt });
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${state.apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: {
-            temperature: 0.7,
-            topP: 0.95,
-          },
-        }),
+    async function executeRequest(model) {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${state.apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts }],
+            generationConfig: {
+              temperature: 0.7,
+              topP: 0.95,
+            },
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        const errMsg = data.error?.message || 'Gemini API call failed';
+        // Auto-detect model deprecation notice and migrate
+        if (errMsg.includes('no longer available') || errMsg.includes('models/')) {
+          const match = errMsg.match(/models\/(gemini-[\w\.-]+)/g);
+          let recModel = 'gemini-3.6-flash';
+          if (match && match.length > 1) {
+            recModel = match[1].replace('models/', '');
+          } else if (match && match.length === 1 && !match[0].includes(model)) {
+            recModel = match[0].replace('models/', '');
+          }
+          if (recModel && recModel !== model) {
+            console.log(`Auto-migrating model from ${model} to ${recModel}`);
+            setModelSelection(recModel);
+            showToast(`Auto-switching to recommended ${recModel}...`, 'info');
+            return await executeRequest(recModel);
+          }
+        }
+        throw new Error(errMsg);
       }
-    );
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error?.message || 'Gemini API call failed');
+      const candidate = data.candidates?.[0];
+      const text = candidate?.content?.parts?.[0]?.text;
+      if (!text) {
+        throw new Error('No content returned from Gemini model');
+      }
+      return text;
     }
 
-    const candidate = data.candidates?.[0];
-    const text = candidate?.content?.parts?.[0]?.text;
-    if (!text) {
-      throw new Error('No content returned from Gemini model');
-    }
-    return text;
+    return await executeRequest(modelToUse);
   }
 
   // --- STAGE 1: Generate ChatGPT Storyboard Prompt ---
